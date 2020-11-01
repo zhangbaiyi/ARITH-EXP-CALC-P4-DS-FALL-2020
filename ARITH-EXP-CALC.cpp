@@ -72,21 +72,106 @@ void arithStack<T>::makeEmpty() {
     }
 }
 
+void expInput(){
 
+    char* toInput = (char*) malloc(sizeof(char));
+    cin>>toInput;
+    oriInput = toInput;
+}
+
+void toBackExp(string& backEXP){
+    arithStack<char> toBackWorkStack;
+    toBackWorkStack.Push('#');
+    char curTop = '\0';
+    char toPop = '\0';
+    for(int i = 0; toBackWorkStack.isEmpty()==false && oriInput[i] != '=' && i < oriInput.size() ; i++)
+    {
+        if( isNum(oriInput[i]) )
+        {
+            backEXP.push_back(oriInput[i]);
+        }
+        else {
+            toBackWorkStack.getTop(curTop);//tmp is the top operator in the stack
+            if(inStackPriority(curTop)<outStackPriority(oriInput[i]))
+            {
+                toBackWorkStack.Push(oriInput[i]);
+                //then : jumps to the big for-loop
+            }
+            else if(inStackPriority(curTop)>outStackPriority(oriInput[i]))
+            {
+                toBackWorkStack.Pop(toPop);
+                backEXP.push_back(toPop);
+            }
+            else
+            {
+                toBackWorkStack.Pop(toPop);
+                if(toPop = '(')
+                {
+                    continue;
+                }
+            }
+        }
+    }
+}
+
+bool isNum(char toJudge){
+    if(toJudge>=48&&toJudge<=57)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+int inStackPriority(char& ch) {
+    switch (ch) {
+        case '#':
+            return 0;
+        case '(':
+            return 1;
+        case '^':
+            return 7;
+        case '*':
+        case '/':
+        case '%':
+            return 5;
+        case '+':
+        case '-':
+            return 3;
+        case ')':
+            return 8;
+
+    }
+}
+
+int outStackPriority(char& ch) {
+    switch (ch) {
+        case '#':
+            return 0;
+        case '(':
+            return 8;
+        case '^':
+            return 6;
+        case '*':
+        case '/':
+        case '%':
+            return 4;
+        case '+':
+        case '-':
+            return 2;
+        case ')':
+            return 1;
+
+    }
+}
 int main(void){
 
-    arithStack<int> stack;
-    stack.Push(1);
-    int yes;
-    stack.Push(2);
-    stack.Push(3);
-    cout<<stack.getSize()<<endl;
-    int store;
-    stack.getTop(store);
-    stack.Pop(yes);
-    cout<<yes<<endl;
-    cout<<store<<endl;
-    cout<<"This is a moyu contribution."<<endl;
+    string backEXP;
+    expInput();
+    toBackExp(backEXP);
+
 
 
 }

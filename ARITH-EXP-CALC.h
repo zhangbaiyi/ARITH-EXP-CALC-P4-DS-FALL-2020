@@ -8,9 +8,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <cstring>
 #include <iostream>
 using namespace std;
+#define EXP_MAX_SIZE 100
 
+string oriInput;
 
 template <class T>
 struct stackNode{
@@ -42,6 +45,13 @@ template<class T>
 arithStack<T>::~arithStack() {
     makeEmpty();
 }
+
+void expInput();
+void calcExp(string& backEXP);
+bool isNum(char toJudge);
+int inStackPriority(char& ch);
+int outStackPriority(char& ch);
+
 
 
 
