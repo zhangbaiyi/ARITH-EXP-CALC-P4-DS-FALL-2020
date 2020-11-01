@@ -12,4 +12,37 @@
 using namespace std;
 
 
+template <class T>
+struct stackNode{
+    T data;
+    stackNode<T>* next;
+};
+
+template <class T>
+class arithStack{
+public:
+    arithStack();
+    ~arithStack();
+    void Push(const T& toPush);
+    bool Pop(T& toPop);
+    bool getTop(T& toStore);
+    bool isEmpty();
+    int getSize();
+    void makeEmpty();
+private:
+    stackNode<T> *top;
+};
+
+template<class T>
+arithStack<T>::arithStack() {
+    top= NULL;
+}
+
+template<class T>
+arithStack<T>::~arithStack() {
+    makeEmpty();
+}
+
+
+
 #endif //ARITH_EXP_CALC_P4_DS_FALL_2020_ARITH_EXP_CALC_H
