@@ -49,6 +49,9 @@ arithStack<T>::~arithStack() {
 void expInput();
 void calcExp(string& backEXP);
 bool isNum(char toJudge);
+bool isOperator(char toJudge);
+bool lessPrior(char leftOp, char rightOp);
+
 int inStackPriority(char& ch);
 int outStackPriority(char& ch);
 

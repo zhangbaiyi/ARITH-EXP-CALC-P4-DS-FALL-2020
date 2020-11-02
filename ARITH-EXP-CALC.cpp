@@ -79,34 +79,28 @@ void expInput(){
     oriInput = toInput;
 }
 
-void toBackExp(string& backEXP){
+void toBackExp(string& backEXP) {
     arithStack<char> toBackWorkStack;
 
-    int i=0;
+    int i = 0;
     char curTop = '\0';
-    char _popped = '\0'
-    while(oriInput[i]!='=')
-    {
+    char _popped = '\0';
+    while (oriInput[i] != '=') {
 
         toBackWorkStack.getTop(curTop);
 
-
-        //如果发现数字，那么输出到后缀表达式。
         //If operand is found, add to postfix-exp
-        if(isNum(oriInput[i]))
-        {
+        if (isNum(oriInput[i])) {
             backEXP.push_back(oriInput[i]);
         }
 
-        if(oriInput[i]=='(')
-        {
+        if (oriInput[i] == '(') {
             toBackWorkStack.Push(oriInput[i]);
+
         }
 
-        if(oriInput[i]==')')
-        {
-            while(!toBackWorkStack.isEmpty() && curTop!= '(' )
-            {
+        if (oriInput[i] == ')') {
+            while (!toBackWorkStack.isEmpty() && curTop != '(') {
                 toBackWorkStack.Pop(_popped);
                 backEXP.push_back(_popped);
             }
@@ -114,24 +108,28 @@ void toBackExp(string& backEXP){
             toBackWorkStack.Pop(leftParenthesis);
         }
 
-        if(isOperator[i])
-        {
-            if(toBackWorkStack.isEmpty() || curTop =='(')
-            {
+        if (isOperator(oriInput[i])) {
+            toBackWorkStack.getTop(curTop);
+            if (toBackWorkStack.isEmpty() || curTop == '(') {
                 toBackWorkStack.Push(oriInput[i]);
             }
-            else
-            {
-                while(!toBackWorkStack.isEmpty() && curTop !='(' && lessPrior(oriInput[i],curTop));
-                {
-                    toBackWorkStack.Push(ori)
+            else{
+                while (!toBackWorkStack.isEmpty() && curTop != '(' && lessPrior(oriInput[i], curTop)) {
+                    toBackWorkStack.Push(oriInput[i]);
+                    backEXP.push_back(curTop);
                 }
+                toBackWorkStack.Push(oriInput[i]);
             }
         }
-
-
-
+        i++;
     }
+    while(!toBackWorkStack.isEmpty())
+    {
+        toBackWorkStack.Pop(_popped);
+        backEXP.push_back(_popped);
+    }
+
+}
 
 
 
@@ -176,7 +174,7 @@ void toBackExp(string& backEXP){
 //            }
 //        }
 //    }
-}
+//}
 
 bool isNum(char toJudge){
     if(toJudge>=48&&toJudge<=57)
