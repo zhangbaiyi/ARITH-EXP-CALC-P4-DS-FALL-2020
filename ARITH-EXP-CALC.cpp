@@ -81,37 +81,101 @@ void expInput(){
 
 void toBackExp(string& backEXP){
     arithStack<char> toBackWorkStack;
-    toBackWorkStack.Push('#');
+
+    int i=0;
     char curTop = '\0';
-    char toPop = '\0';
-    for(int i = 0; toBackWorkStack.isEmpty()==false && oriInput[i] != '=' && i < oriInput.size() ; i++)
+    char _popped = '\0'
+    while(oriInput[i]!='=')
     {
-        if( isNum(oriInput[i]) )
+
+        toBackWorkStack.getTop(curTop);
+
+
+        //如果发现数字，那么输出到后缀表达式。
+        //If operand is found, add to postfix-exp
+        if(isNum(oriInput[i]))
         {
             backEXP.push_back(oriInput[i]);
         }
-        else {
-            toBackWorkStack.getTop(curTop);//tmp is the top operator in the stack
-            if(inStackPriority(curTop)<outStackPriority(oriInput[i]))
+
+        if(oriInput[i]=='(')
+        {
+            toBackWorkStack.Push(oriInput[i]);
+        }
+
+        if(oriInput[i]==')')
+        {
+            while(!toBackWorkStack.isEmpty() && curTop!= '(' )
+            {
+                toBackWorkStack.Pop(_popped);
+                backEXP.push_back(_popped);
+            }
+            char leftParenthesis;
+            toBackWorkStack.Pop(leftParenthesis);
+        }
+
+        if(isOperator[i])
+        {
+            if(toBackWorkStack.isEmpty() || curTop =='(')
             {
                 toBackWorkStack.Push(oriInput[i]);
-                //then : jumps to the big for-loop
-            }
-            else if(inStackPriority(curTop)>outStackPriority(oriInput[i]))
-            {
-                toBackWorkStack.Pop(toPop);
-                backEXP.push_back(toPop);
             }
             else
             {
-                toBackWorkStack.Pop(toPop);
-                if(toPop = '(')
+                while(!toBackWorkStack.isEmpty() && curTop !='(' && lessPrior(oriInput[i],curTop));
                 {
-                    continue;
+                    toBackWorkStack.Push(ori)
                 }
             }
         }
+
+
+
     }
+
+
+
+
+
+
+
+
+//    toBackWorkStack.Push('#');
+//    char curTop = '\0';
+//    char toPop = '\0';
+//    int i=0;
+//    while(!toBackWorkStack.isEmpty() && oriInput[i] != '=')
+//    {
+//        if( isNum(oriInput[i]) )
+//        {
+//            backEXP.push_back(oriInput[i]);
+//            i++;
+//        }
+//        else {
+//            toBackWorkStack.getTop(curTop);
+//            //tmp is the top operator in the stack
+//            if(inStackPriority(curTop) < outStackPriority(oriInput[i]))
+//            {
+//                toBackWorkStack.Push(oriInput[i]);
+//                i++;
+//                //then : jumps to the big for-loop
+//            }
+//            else if(inStackPriority(curTop) > outStackPriority(oriInput[i]))
+//            {
+//                toBackWorkStack.Pop(toPop);
+//                backEXP.push_back(toPop);
+//                i++;
+//            }
+//            else if(inStackPriority(curTop) == outStackPriority(oriInput[i]))
+//            {
+//                toBackWorkStack.Pop(toPop);
+//                if(toPop = '(')
+//                {
+//                    i++;
+//                }
+//            }
+//        }
+//    }
 }
 
 bool isNum(char toJudge){
@@ -125,6 +189,53 @@ bool isNum(char toJudge){
     }
 }
 
+bool isOperator(char toJudge)
+{
+    if(toJudge=='+'||toJudge=='-'||toJudge=='*'||toJudge=='/'||toJudge=='^'||toJudge=='%')
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool lessPrior(char leftOp, char rightOp) {
+    int leftOpPrior;
+    int rightOpPrior;
+    switch (leftOp) {
+
+        case '^':
+            leftOpPrior = 3 ;
+            break;
+        case '*':
+        case '/':
+        case '%':
+            leftOpPrior = 2 ;
+            break;
+        case '+':
+        case '-':
+            leftOpPrior = 1 ;
+            break;
+    }
+    switch (rightOp) {
+
+        case '^':
+            rightOpPrior = 3 ;
+            break;
+        case '*':
+        case '/':
+        case '%':
+            rightOpPrior = 2 ;
+            break;
+        case '+':
+        case '-':
+            rightOpPrior = 1 ;
+            break;
+    }
+    return (leftOpPrior<=rightOpPrior) ;
+}
 int inStackPriority(char& ch) {
     switch (ch) {
         case '#':
@@ -171,7 +282,7 @@ int main(void){
     string backEXP;
     expInput();
     toBackExp(backEXP);
-
+    cout<<backEXP.c_str()<<endl;
 
 
 }
