@@ -10,6 +10,9 @@
 #include <stdlib.h>
 #include <cstring>
 #include <iostream>
+#include <vector>
+
+
 using namespace std;
 #define EXP_MAX_SIZE 100
 
@@ -36,6 +39,13 @@ private:
     stackNode<T> *top;
 };
 
+typedef struct {
+    bool isDigit = false;
+    double digit = 0.0;
+    bool isOperator = false;
+    char op = '\0';
+}item;
+
 template<class T>
 arithStack<T>::arithStack() {
     top= NULL;
@@ -47,13 +57,12 @@ arithStack<T>::~arithStack() {
 }
 
 void expInput();
-void calcExp(string& backEXP);
+vector<item> preProcess(string& exp);
+void toBackExp(string& backEXP);
 bool isNum(char toJudge);
 bool isOperator(char toJudge);
 bool lessPrior(char leftOp, char rightOp);
-
-int inStackPriority(char& ch);
-int outStackPriority(char& ch);
+bool equalPrior(char leftOp, char rightOp);
 
 
 

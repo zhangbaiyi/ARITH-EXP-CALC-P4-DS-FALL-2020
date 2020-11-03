@@ -79,101 +79,120 @@ void expInput(){
     oriInput = toInput;
 }
 
-void toBackExp(string& backEXP) {
-    arithStack<char> toBackWorkStack;
+vector<item> preProcess(string& exp){
+//    auto it = exp.begin();
+
+    int itemIndex=0;
+    vector<item> result;
+
+
+    for(auto it = exp.begin();it!=exp.end();it++)
+    {
+
+
+        if((!isOperator(*it)) || (*it!='(') || (*it!=')') )
+        {
+            cout<<"Bad Input"<<endl;
+            exit(1);
+
+        }
+
+        if(!isNum(*it))
+        {
+            cout<<"Bad Input"<<endl;
+            exit(1);
+        }
+
+        if(*it == ' ')
+        {
+            continue;
+        }
+
+        if(isOperator(*it)){
+            item tmp;
+            tmp.isOperator = true;
+            tmp.op = *it;
+            result.push_back(tmp);
+        }
+
+        if(isNum(*it)){
+            int numDigits = 0;
+            string toNum;
+            for(auto it1 = it; isNum(*it1); it1++) {
+                toNum.push_back(*it1);
+            }
+            strtof (toNum, &(*it1));
+
+
+
+            item tmp;
+            tmp.isOperator = true;
+            tmp.op = *it;
+        }
+
+    }
+}
+
+void infix_to_postfix(string& postFixExp) {
+    arithStack<char> st;
 
     int i = 0;
     char curTop = '\0';
     char _popped = '\0';
-    while (oriInput[i] != '=') {
+    while (oriInput[i] != '='  ) {
 
-        toBackWorkStack.getTop(curTop);
+        st.getTop(curTop);
 
         //If operand is found, add to postfix-exp
         if (isNum(oriInput[i])) {
-            backEXP.push_back(oriInput[i]);
+            postFixExp.push_back(oriInput[i]);
         }
 
         if (oriInput[i] == '(') {
-            toBackWorkStack.Push(oriInput[i]);
+            st.Push(oriInput[i]);
         }
 
         if (oriInput[i] == ')') {
-            while (!toBackWorkStack.isEmpty() && curTop != '(') {
-                toBackWorkStack.Pop(_popped);
-                backEXP.push_back(_popped);
+            while (!st.isEmpty() && curTop != '(') {
+                st.Pop(_popped);
+                postFixExp.push_back(_popped);
+                st.getTop(curTop);
+
             }
             char leftParenthesis;
-            toBackWorkStack.Pop(leftParenthesis);
+            st.Pop(leftParenthesis);
+            st.getTop(curTop);
+
         }
 
         if (isOperator(oriInput[i])) {
-            toBackWorkStack.getTop(curTop);
-            if (toBackWorkStack.isEmpty() || curTop == '(') {
-                toBackWorkStack.Push(oriInput[i]);
+            st.getTop(curTop);
+            if (st.isEmpty() || curTop == '(') {
+                st.Push(oriInput[i]);
+                st.getTop(curTop);
+
             }
             else{
-                while (!toBackWorkStack.isEmpty() && curTop != '(' && lessPrior(oriInput[i], curTop)) {
-                    toBackWorkStack.Push(oriInput[i]);
-                    backEXP.push_back(curTop);
+                while (!st.isEmpty() && curTop != '(' && lessPrior(oriInput[i], curTop)) {
+                    st.Push(oriInput[i]);
+                    st.getTop(curTop);
+                    postFixExp.push_back(curTop);
                 }
-                toBackWorkStack.Push(oriInput[i]);
+
+                st.Push(oriInput[i]);
+                st.getTop(curTop);
+
             }
         }
         i++;
     }
-    while(!toBackWorkStack.isEmpty())
+    while(!st.isEmpty())
     {
-        toBackWorkStack.Pop(_popped);
-        backEXP.push_back(_popped);
+        st.Pop(_popped);
+        postFixExp.push_back(_popped);
     }
 
 }
-
-
-
-
-
-
-
-
-//    toBackWorkStack.Push('#');
-//    char curTop = '\0';
-//    char toPop = '\0';
-//    int i=0;
-//    while(!toBackWorkStack.isEmpty() && oriInput[i] != '=')
-//    {
-//        if( isNum(oriInput[i]) )
-//        {
-//            backEXP.push_back(oriInput[i]);
-//            i++;
-//        }
-//        else {
-//            toBackWorkStack.getTop(curTop);
-//            //tmp is the top operator in the stack
-//            if(inStackPriority(curTop) < outStackPriority(oriInput[i]))
-//            {
-//                toBackWorkStack.Push(oriInput[i]);
-//                i++;
-//                //then : jumps to the big for-loop
-//            }
-//            else if(inStackPriority(curTop) > outStackPriority(oriInput[i]))
-//            {
-//                toBackWorkStack.Pop(toPop);
-//                backEXP.push_back(toPop);
-//                i++;
-//            }
-//            else if(inStackPriority(curTop) == outStackPriority(oriInput[i]))
-//            {
-//                toBackWorkStack.Pop(toPop);
-//                if(toPop = '(')
-//                {
-//                    i++;
-//                }
-//            }
-//        }
-//    }
-//}
 
 bool isNum(char toJudge){
     if(toJudge>='0'&&toJudge<='9')
@@ -231,55 +250,52 @@ bool lessPrior(char leftOp, char rightOp) {
             rightOpPrior = 1 ;
             break;
     }
-    return (leftOpPrior<=rightOpPrior) ;
+    return (leftOpPrior < rightOpPrior) ;
 }
-int inStackPriority(char& ch) {
-    switch (ch) {
-        case '#':
-            return 0;
-        case '(':
-            return 1;
+
+bool equalPrior(char leftOp, char rightOp) {
+    int leftOpPrior;
+    int rightOpPrior;
+    switch (leftOp) {
+
         case '^':
-            return 7;
+            leftOpPrior = 3 ;
+            break;
         case '*':
         case '/':
         case '%':
-            return 5;
+            leftOpPrior = 2 ;
+            break;
         case '+':
         case '-':
-            return 3;
-        case ')':
-            return 8;
-
+            leftOpPrior = 1 ;
+            break;
     }
-}
+    switch (rightOp) {
 
-int outStackPriority(char& ch) {
-    switch (ch) {
-        case '#':
-            return 0;
-        case '(':
-            return 8;
         case '^':
-            return 6;
+            rightOpPrior = 3 ;
+            break;
         case '*':
         case '/':
         case '%':
-            return 4;
+            rightOpPrior = 2 ;
+            break;
         case '+':
         case '-':
-            return 2;
-        case ')':
-            return 1;
-
+            rightOpPrior = 1 ;
+            break;
     }
+    return (leftOpPrior = rightOpPrior) ;
 }
+
 int main(void){
 
-    string backEXP;
+    string postFixExp;
     expInput();
-    toBackExp(backEXP);
-    cout<<backEXP.c_str()<<endl;
+    preProcess(postFixExp);
+    infix_to_postfix(postFixExp);
+    cout<<postFixExp.c_str()<<endl;
 
 
 }
