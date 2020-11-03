@@ -96,7 +96,6 @@ void toBackExp(string& backEXP) {
 
         if (oriInput[i] == '(') {
             toBackWorkStack.Push(oriInput[i]);
-
         }
 
         if (oriInput[i] == ')') {
@@ -177,7 +176,7 @@ void toBackExp(string& backEXP) {
 //}
 
 bool isNum(char toJudge){
-    if(toJudge>=48&&toJudge<=57)
+    if(toJudge>='0'&&toJudge<='9')
     {
         return true;
     }
