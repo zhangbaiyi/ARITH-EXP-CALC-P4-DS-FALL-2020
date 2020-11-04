@@ -79,36 +79,38 @@ void expInput(){
     oriInput = toInput;
 }
 
-vector<item> preProcess(string& exp){
-//    auto it = exp.begin();
+void preProcess(string& exp, vector<item>& result){
 
-    int itemIndex=0;
-    vector<item> result;
+    for(auto it = exp.begin();it!=exp.end();it++) {
 
+        if (!isOperator(*it) && (!isNum(*it)) && (*it != '(') && (*it != ')') && (*it != '=')) {
 
+            cout << "Bad Input" << endl;
+            exit(1);
+
+        }
+
+        if (*it == '.') {
+            cout << "Bad Input: decimal point ('.') is not supported" << endl;
+            exit(1);
+        }
+
+        if (it == (exp.end() - 1) && *it != '=') {
+            cout << "Bad Input" << endl;
+            exit(1);
+        }
+
+        if (isNum(*it)) {
+            if (it-1 != exp.end() && *(it - 1) == '+') {
+                if (isOperator(*(it - 2)) || *(it - 2) == '(' || *(it - 2) == ')' || it - 1 == exp.begin()) {
+                    *it = '0';
+                }
+            }
+        }
+    }
     for(auto it = exp.begin();it!=exp.end();it++)
     {
-
-
-        if((!isOperator(*it)) || (*it!='(') || (*it!=')') )
-        {
-            cout<<"Bad Input"<<endl;
-            exit(1);
-
-        }
-
-        if(!isNum(*it))
-        {
-            cout<<"Bad Input"<<endl;
-            exit(1);
-        }
-
-        if(*it == ' ')
-        {
-            continue;
-        }
-
-        if(isOperator(*it)){
+        if(isOperator(*it)||(*it=='(')||(*it==')')){
             item tmp;
             tmp.isOperator = true;
             tmp.op = *it;
@@ -116,21 +118,35 @@ vector<item> preProcess(string& exp){
         }
 
         if(isNum(*it)){
-            int numDigits = 0;
             string toNum;
-            for(auto it1 = it; isNum(*it1); it1++) {
+            auto it1 = exp.begin();
+
+
+            bool isNegative;
+
+            if(it!=exp.begin() && it-1 != exp.begin() && *(it-1)=='-' )
+            {
+                if(isOperator(*(it-2)) || *(it-2) == '(' || *(it-2) ==')' || it-1 == exp.begin())
+                {
+                    cout<<"nega"<<endl;
+                }
+            }
+            for( it1 = it; isNum(*it1)&&it1!=exp.end(); it1++) {
                 toNum.push_back(*it1);
             }
-            strtof (toNum, &(*it1));
-
-
-
             item tmp;
-            tmp.isOperator = true;
-            tmp.op = *it;
+            tmp.isDigit = true;
+            tmp.digit = (double)atoi(toNum.c_str());
+            result.push_back(tmp);
+            it=it1-1;
+            continue;
         }
-
     }
+
+    item equalSign;
+    equalSign.isOperator = true;
+    equalSign.op = '=';
+    result.push_back(equalSign);
 }
 
 void infix_to_postfix(string& postFixExp) {
@@ -292,8 +308,11 @@ bool equalPrior(char leftOp, char rightOp) {
 int main(void){
 
     string postFixExp;
+
     expInput();
-    preProcess(postFixExp);
+
+    vector<item> processedInput;
+    preProcess(oriInput,processedInput);
     infix_to_postfix(postFixExp);
     cout<<postFixExp.c_str()<<endl;
 
