@@ -11,6 +11,7 @@
 #include <cstring>
 #include <iostream>
 #include <vector>
+#include <math.h>
 
 
 using namespace std;
@@ -58,10 +59,14 @@ arithStack<T>::~arithStack() {
 
 void expInput();
 void preProcess(string& exp, vector<item>& result);
+void infix_to_postfix(vector<item>& processedInput, vector<item>& result);
+double calcRes(vector<item>& postfixExp);
+
 bool isNum(char toJudge);
 bool isOperator(char toJudge);
 bool lessPrior(char leftOp, char rightOp);
 bool equalPrior(char leftOp, char rightOp);
+
 
 
 
