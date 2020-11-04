@@ -58,7 +58,6 @@ arithStack<T>::~arithStack() {
 
 void expInput();
 void preProcess(string& exp, vector<item>& result);
-void toBackExp(string& backEXP);
 bool isNum(char toJudge);
 bool isOperator(char toJudge);
 bool lessPrior(char leftOp, char rightOp);

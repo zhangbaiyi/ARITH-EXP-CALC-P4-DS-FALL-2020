@@ -100,14 +100,25 @@ void preProcess(string& exp, vector<item>& result){
             exit(1);
         }
 
-        if (isNum(*it)) {
-            if (it-1 != exp.end() && *(it - 1) == '+') {
-                if (isOperator(*(it - 2)) || *(it - 2) == '(' || *(it - 2) == ')' || it - 1 == exp.begin()) {
-                    *it = '0';
-                }
-            }
+    }
+
+    int isParentOpen = 0;
+    for(auto it = exp.begin();it!=exp.end();it++)
+    {
+        if(*it=='(')
+        {
+            isParentOpen++;
+        }
+        if(*it==')') {
+            isParentOpen--;
         }
     }
+    if (isParentOpen) {
+        cout << "Bad Input" << endl;
+        exit(1);
+    }
+
+
     for(auto it = exp.begin();it!=exp.end();it++)
     {
         if(isOperator(*it)||(*it=='(')||(*it==')')){
@@ -120,27 +131,45 @@ void preProcess(string& exp, vector<item>& result){
         if(isNum(*it)){
             string toNum;
             auto it1 = exp.begin();
-
-
-            bool isNegative;
-
-            if(it!=exp.begin() && it-1 != exp.begin() && *(it-1)=='-' )
-            {
-                if(isOperator(*(it-2)) || *(it-2) == '(' || *(it-2) ==')' || it-1 == exp.begin())
-                {
-                    cout<<"nega"<<endl;
-                }
-            }
             for( it1 = it; isNum(*it1)&&it1!=exp.end(); it1++) {
                 toNum.push_back(*it1);
             }
             item tmp;
             tmp.isDigit = true;
-            tmp.digit = (double)atoi(toNum.c_str());
+            tmp.digit = (double)stoi(toNum);
             result.push_back(tmp);
             it=it1-1;
             continue;
         }
+    }
+
+    for(int i=0;i<result.size();i++)
+    {
+        //judging case when -1 is in the beginning.
+        if(i==0 && result[i].isOperator)
+        {
+            if(result[i].op == '-')
+            {
+                result[i+1].digit = -result[i+1].digit;
+                result[i].op='\0';
+                result[i].isOperator = false;
+            }
+        }
+        //judging "exp like (-1*2)"
+        if(i+2<result.size() && result[i].isOperator && result[i].op =='('&& result[i+1].isOperator && result[i+1].op =='-')
+        {
+            result[i+2].digit = -result[i+2].digit;
+            result[i+1].op='\0';
+            result[i+1].isOperator = false;
+        }
+        //judging cases like "2*-1+2"
+        if(i+2<result.size() && isOperator(result[i].op) && result[i+1].op == '-')
+        {
+            result[i+2].digit = -result[i+2].digit;
+            result[i+1].op='\0';
+            result[i+1].isOperator = false;
+        }
+
     }
 
     item equalSign;
