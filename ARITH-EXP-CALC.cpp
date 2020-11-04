@@ -143,6 +143,7 @@ void preProcess(string& exp, vector<item>& result){
         }
     }
 
+    //judging for negative numbers
     for(int i=0;i<result.size();i++)
     {
         //judging case when -1 is in the beginning.
@@ -169,7 +170,32 @@ void preProcess(string& exp, vector<item>& result){
             result[i+1].op='\0';
             result[i+1].isOperator = false;
         }
+    }
 
+    //judging for positive numbers  with extra '+'
+    for(int i=0;i<result.size();i++)
+    {
+        //judging case when -1 is in the beginning.
+        if(i==0 && result[i].isOperator)
+        {
+            if(result[i].op == '+')
+            {
+                result[i].op='\0';
+                result[i].isOperator = false;
+            }
+        }
+        //judging "exp like (+1*2)"
+        if(i+2<result.size() && result[i].isOperator && result[i].op =='('&& result[i+1].isOperator && result[i+1].op =='+')
+        {
+            result[i+1].op='\0';
+            result[i+1].isOperator = false;
+        }
+        //judging cases like "2*+1+2"
+        if(i+2<result.size() && isOperator(result[i].op) && result[i+1].op == '+')
+        {
+            result[i+1].op='\0';
+            result[i+1].isOperator = false;
+        }
     }
 
     item equalSign;
