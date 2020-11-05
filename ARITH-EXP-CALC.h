@@ -57,7 +57,8 @@ arithStack<T>::~arithStack() {
     makeEmpty();
 }
 
-void expInput();
+void menu();
+bool expInput();
 void preProcess(string& exp, vector<item>& result);
 void infix_to_postfix(vector<item>& processedInput, vector<item>& result);
 double calcRes(vector<item>& postfixExp);

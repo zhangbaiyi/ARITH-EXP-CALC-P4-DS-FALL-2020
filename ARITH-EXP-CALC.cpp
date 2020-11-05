@@ -72,11 +72,16 @@ void arithStack<T>::makeEmpty() {
     }
 }
 
-void expInput(){
+bool expInput(){
 
     char* toInput = (char*) malloc(sizeof(char));
     cin>>toInput;
+    if (strcmp("q",toInput) == 0)
+    {
+        return false;
+    }
     oriInput = toInput;
+    return true;
 }
 
 void preProcess(string& exp, vector<item>& result) {
@@ -301,6 +306,11 @@ void infix_to_postfix(vector<item>& processedInput, vector<item>& result) {
                     result.push_back(_popped);
                     st.getTop(curTop);
                 }
+                while (!st.isEmpty() && curTop.op != '(' && processedInput[i].op == '%' && (curTop.op =='*'||curTop.op =='/')) {
+                    st.Pop(_popped);
+                    result.push_back(_popped);
+                    st.getTop(curTop);
+                }
                 st.Push(processedInput[i]);
                 st.getTop(curTop);
             }
@@ -442,7 +452,7 @@ bool equalPrior(char leftOp, char rightOp) {
             break;
         case '*':
         case '/':
-        case '%':
+//        case '%':
             leftOpPrior = 2 ;
             break;
         case '+':
@@ -457,7 +467,7 @@ bool equalPrior(char leftOp, char rightOp) {
             break;
         case '*':
         case '/':
-        case '%':
+//        case '%':
             rightOpPrior = 2 ;
             break;
         case '+':
@@ -472,21 +482,48 @@ bool equalPrior(char leftOp, char rightOp) {
     return (leftOpPrior == rightOpPrior) ;
 }
 
-int main()
-{
-    expInput();
-    vector<item> processedInput;
-    vector<item> postfixExp;
-    preProcess(oriInput,processedInput);
-    infix_to_postfix(processedInput, postfixExp);
-    for(int i=0;i<postfixExp.size();i++)
-    {
-        if(postfixExp[i].isDigit)
-            cout<<postfixExp[i].digit;
-        if(postfixExp[i].isOperator)
-            cout<<postfixExp[i].op;
+void menu() {
+    cout << "Please enter a infix expression." << endl;
+    cout << "请输入一个中缀表达式" << endl;
+    cout << "Please enter '=' at the end of expresion" << endl;
+    cout << "请在结尾输入等号 = " << endl;
+    cout << "Please note that this program can only calculate integer" << endl;
+    cout << "请注意本程序只计算整数，小数点会被视为Bad Input" << endl;
+    cout << "The operators can be one of below:" << endl;
+    cout << "请注意本程序的运算符仅限以下几种" << endl;
+    cout << "'+','-','*','/','%','^','(',')'" << endl;
+    cout << R"(The Blankspace ends the process of input. For example, "2 +5/2" is read as "2".)" << endl;
+    cout << "空格会视为输入结束。例如，\"2 +5/2\" 会被读作 \"2\" " << endl;
+    cout << "enter a 'q' can quit the program." << endl;
+}
+
+int main() {
+    bool continueFlag = true;
+    while (continueFlag) {
+        menu();
+        continueFlag = expInput();
+        vector<item> processedInput;
+        vector<item> postfixExp;
+        preProcess(oriInput, processedInput);
+        infix_to_postfix(processedInput, postfixExp);
+
+        if (continueFlag) {
+            cout << "The postfix expression is:" << endl;
+            cout << "后缀表达式为:" << endl;
+            for (int i = 0; i < postfixExp.size(); i++) {
+                if (postfixExp[i].isDigit)
+                    cout << postfixExp[i].digit;
+                if (postfixExp[i].isOperator)
+                    cout << postfixExp[i].op;
+            }
+
+            double result = calcRes(postfixExp);
+            cout << endl;
+            cout << "The result is:" << endl;
+            cout << "最终结果为:" << endl;
+            cout << result << endl;
+        }
     }
-    double result=0.0;
-    result = calcRes(postfixExp);
-    cout<<endl<<result<<endl;
+    getchar();
+    return 0;
 }
