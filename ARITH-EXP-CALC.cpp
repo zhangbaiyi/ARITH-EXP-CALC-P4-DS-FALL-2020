@@ -198,10 +198,14 @@ void preProcess(string& exp, vector<item>& result) {
 
     for (int i = 0; i < result.size(); i++) {
         if (i + 2 < result.size() && result[i + 2].op != '(' && result[i + 2].op != ')' &&
-            equalPrior(result[i].op, result[i + 2].op)) {
-            for (int ii = i; ii + 2 < result.size(); ii = ii + 2) {
-                if (!equalPrior(result[i].op, result[ii].op)) {
-                    curFarEqualPriorIndex = ii - 2;
+            isOperator(result[i].op) && isOperator(result[i + 2].op) &&
+            equalPrior(result[i].op, result[i + 2].op))
+        {
+            curFarEqualPriorIndex = i;
+            for (int ii = i; ii < result.size(); ii = ii + 2) {
+
+                if (equalPrior(result[i].op, result[ii].op) && isOperator(result[i].op) && isOperator(result[ii].op)) {
+                    curFarEqualPriorIndex = ii;
                 }
             }
             auto j = result.begin() + i;
