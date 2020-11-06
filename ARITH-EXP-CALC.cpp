@@ -122,6 +122,7 @@ void preProcess(string& exp, vector<item>& result) {
     }
 
 
+
     for (auto it = exp.begin(); it != exp.end(); it++) {
         if (isOperator(*it) || (*it == '(') || (*it == ')')) {
             item tmp;
@@ -253,6 +254,15 @@ void preProcess(string& exp, vector<item>& result) {
         }
     }
 
+    for(int i = 0;i<result.size();i++)
+    {
+        if(i!= 0 && result[i].isOperator && result[i].op =='(' && result[i-1].isDigit ){
+            item tmp;
+            tmp.isOperator = true;
+            tmp.op = '*';
+            result.insert(result.begin()+i,tmp);
+        }
+    }
 
     item equalSign;
     equalSign.isOperator = true;
@@ -484,16 +494,16 @@ bool equalPrior(char leftOp, char rightOp) {
 
 void menu() {
     cout << "Please enter a infix expression." << endl;
-    cout << "请输入一个中缀表达式" << endl;
+//    cout << "请输入一个中缀表达式" << endl;
     cout << "Please enter '=' at the end of expresion" << endl;
-    cout << "请在结尾输入等号 = " << endl;
+//    cout << "请在结尾输入等号 = " << endl;
     cout << "Please note that this program can only calculate integer" << endl;
-    cout << "请注意本程序只计算整数，小数点会被视为Bad Input" << endl;
+//    cout << "请注意本程序只计算整数，小数点会被视为Bad Input" << endl;
     cout << "The operators can be one of below:" << endl;
-    cout << "请注意本程序的运算符仅限以下几种" << endl;
+//    cout << "请注意本程序的运算符仅限以下几种" << endl;
     cout << "'+','-','*','/','%','^','(',')'" << endl;
     cout << R"(The Blankspace ends the process of input. For example, "2 +5/2" is read as "2".)" << endl;
-    cout << "空格会视为输入结束。例如，\"2 +5/2\" 会被读作 \"2\" " << endl;
+//    cout << "空格会视为输入结束。例如，\"2 +5/2\" 会被读作 \"2\" " << endl;
     cout << "enter a 'q' can quit the program." << endl;
 }
 
@@ -509,7 +519,7 @@ int main() {
 
         if (continueFlag) {
             cout << "The postfix expression is:" << endl;
-            cout << "后缀表达式为:" << endl;
+//            cout << "后缀表达式为:" << endl;
             for (int i = 0; i < postfixExp.size(); i++) {
                 if (postfixExp[i].isDigit)
                     cout << postfixExp[i].digit;
@@ -520,7 +530,7 @@ int main() {
             double result = calcRes(postfixExp);
             cout << endl;
             cout << "The result is:" << endl;
-            cout << "最终结果为:" << endl;
+//            cout << "最终结果为:" << endl;
             cout << result << endl;
         }
     }

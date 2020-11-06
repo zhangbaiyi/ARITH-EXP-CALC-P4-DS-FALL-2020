@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <cstring>
+#include <string>
 #include <iostream>
 #include <vector>
 #include <math.h>
@@ -40,7 +41,7 @@ private:
     stackNode<T> *top;
 };
 
-typedef struct {
+typedef struct ITEM{
     bool isDigit = false;
     double digit = 0.0;
     bool isOperator = false;
