@@ -150,7 +150,7 @@ void preProcess(string& exp, vector<item>& result) {
     for (int i = 0; i < result.size(); i++) {
         //judging case when -1 is in the beginning.
         if (i == 0 && result[i].isOperator) {
-            if (result[i].op == '-') {
+            if (result[i].op == '-'&&result[i+1].op!='(') {
                 result[i + 1].digit = -result[i + 1].digit;
                 result[i].op = '\0';
                 result[i].isOperator = false;
@@ -164,7 +164,7 @@ void preProcess(string& exp, vector<item>& result) {
             result[i + 1].isOperator = false;
         }
         //judging cases like "2*-1+2"
-        if (i + 2 < result.size() && isOperator(result[i].op) && result[i + 1].op == '-') {
+        if (i + 2 < result.size() && isOperator(result[i].op) && result[i + 1].op == '-'&&result[i+2].op!='(') {
             result[i + 2].digit = -result[i + 2].digit;
             result[i + 1].op = '\0';
             result[i + 1].isOperator = false;
@@ -173,7 +173,7 @@ void preProcess(string& exp, vector<item>& result) {
 
     //judging for positive numbers  with extra '+'
     for (int i = 0; i < result.size(); i++) {
-        //judging case when -1 is in the beginning.
+        //judging case when in the beginning.
         if (i == 0 && result[i].isOperator) {
             if (result[i].op == '+') {
                 result[i].op = '\0';
@@ -254,6 +254,7 @@ void preProcess(string& exp, vector<item>& result) {
         }
     }
 
+    //2(3-7)= case.
     for(int i = 0;i<result.size();i++)
     {
         if(i!= 0 && result[i].isOperator && result[i].op =='(' && result[i-1].isDigit ){
@@ -262,6 +263,56 @@ void preProcess(string& exp, vector<item>& result) {
             tmp.op = '*';
             result.insert(result.begin()+i,tmp);
         }
+    }
+
+    //positive sign is before a left parenthesis.
+    for(int i = 0;i<result.size();i++)
+    {
+        if(i-1>=0 && i+1!= result.size() && result[i+1].isOperator && result[i+1].op =='(' && result[i].isOperator && result[i].op =='+' && result[i-1].isOperator &&isOperator(result[i-1].op)){
+            result[i].isOperator = false;
+            result[i].op = '\0';
+        }
+    }
+
+
+    //negative sign is before a left parenthesis.
+    for(int i = 0;i<result.size();i++)
+    {
+        if(i ==1 && result[i].op == '(' && result[i-1].op == '-')
+        {
+            item tmp;
+            tmp.isDigit = true;
+            tmp.digit = 0;
+            result.insert(result.begin(),tmp);
+            result.insert(result.begin(),leftParent);
+            bool jumpFlag = 0;
+            for(int j=i;j<result.size()&&!jumpFlag;j++)
+            {
+                if(result[j].op == ')')
+                {
+                    result.insert(result.begin()+j+1,rightParent);
+                    jumpFlag = 1;
+                }
+            }
+        }
+        if(i-2>=0 && result[i].op == '(' && result[i-1].op == '-' && isOperator(result[i-2].op))
+        {
+            item tmp;
+            tmp.isDigit = true;
+            tmp.digit = 0;
+            result.insert(result.begin()+i-1,tmp);
+            result.insert(result.begin()+i-1,leftParent);
+            bool jumpFlag = 0;
+            for(int j=i;j<result.size()&&!jumpFlag;j++)
+            {
+                if(result[j].op == ')')
+                {
+                    result.insert(result.begin()+j+1,rightParent);
+                    jumpFlag = 1;
+                }
+            }
+        }
+
     }
 
     item equalSign;
