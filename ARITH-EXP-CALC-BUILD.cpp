@@ -545,16 +545,16 @@ bool equalPrior(char leftOp, char rightOp) {
 
 void menu() {
     cout << "Please enter a infix expression." << endl;
-    cout << "ÇëÊäÈëÒ»¸öÖÐ×º±í´ïÊ½" << endl;
+    cout << "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½×ºï¿½ï¿½ï¿½ï¿½Ê½" << endl;
     cout << "Please enter '=' at the end of expresion" << endl;
-    cout << "ÇëÔÚ½áÎ²ÊäÈëµÈºÅ = " << endl;
+    cout << "ï¿½ï¿½ï¿½Ú½ï¿½Î²ï¿½ï¿½ï¿½ï¿½Èºï¿½ = " << endl;
     cout << "Please note that this program can only calculate integer" << endl;
-    cout << "Çë×¢Òâ±¾³ÌÐòÖ»¼ÆËãÕûÊý£¬Ð¡Êýµã»á±»ÊÓÎªBad Input" << endl;
+    cout << "ï¿½ï¿½×¢ï¿½â±¾ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½á±»ï¿½ï¿½ÎªBad Input" << endl;
     cout << "The operators can be one of below:" << endl;
-    cout << "Çë×¢Òâ±¾³ÌÐòµÄÔËËã·û½öÏÞÒÔÏÂ¼¸ÖÖ" << endl;
+    cout << "ï¿½ï¿½×¢ï¿½â±¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½" << endl;
     cout << "'+','-','*','/','%','^','(',')'" << endl;
     cout << R"(The Blankspace ends the process of input. For example, "2 +5/2" is read as "2".)" << endl;
-    cout << "¿Õ¸ñ»áÊÓÎªÊäÈë½áÊø¡£ÀýÈç£¬\"2 +5/2\" »á±»¶Á×÷ \"2\" " << endl;
+    cout << "ï¿½Õ¸ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ç£¬\"2 +5/2\" ï¿½á±»ï¿½ï¿½ï¿½ï¿½ \"2\" " << endl;
     cout << "enter a 'q' can quit the program." << endl;
 }
 
@@ -570,7 +570,7 @@ int main() {
 
         if (continueFlag) {
             cout << "The postfix expression is:" << endl;
-            cout << "ºó×º±í´ïÊ½Îª:" << endl;
+            cout << "ï¿½ï¿½×ºï¿½ï¿½ï¿½ï¿½Ê½Îª:" << endl;
             for (int i = 0; i < postfixExp.size(); i++) {
                 if (postfixExp[i].isDigit)
                     cout << postfixExp[i].digit;
@@ -581,7 +581,7 @@ int main() {
             double result = calcRes(postfixExp);
             cout << endl;
             cout << "The result is:" << endl;
-            cout << "×îÖÕ½á¹ûÎª:" << endl;
+            cout << "ï¿½ï¿½ï¿½Õ½ï¿½ï¿½Îª:" << endl;
             cout << result << endl;
         }
     }

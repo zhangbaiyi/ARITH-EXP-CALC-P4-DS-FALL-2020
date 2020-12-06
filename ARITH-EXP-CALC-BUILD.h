@@ -16,9 +16,9 @@
 
 
 using namespace std;
-#define EXP_MAX_SIZE 100
+#define EXP_MAX_SIZE 100 //预先设定一个字符串的最大存储值，以免出现溢出的错误。
 
-string oriInput;
+string oriInput;//original input。最初的输入数据。用全局变量更方便其他函数调用。
 
 template <class T>
 struct stackNode{
@@ -31,17 +31,17 @@ class arithStack{
 public:
     arithStack();
     ~arithStack();
-    void Push(const T& toPush);
-    bool Pop(T& toPop);
+    void Push(const T& toPush);//压栈函数
+    bool Pop(T& toPop);//退栈函数，栈顶内容存储在toPop中。
     bool getTop(T& toStore);
     bool isEmpty();
     int getSize();
     void makeEmpty();
 private:
-    stackNode<T> *top;
+    stackNode<T> *top;//这是栈元素的结点，作为私有数据成员。
 };
 
-typedef struct ITEM{
+typedef struct ITEM{//存储字符串翻译过来的数字或者符号。要用布尔值区分便于后续计算等函数计算。
     bool isDigit = false;
     double digit = 0.0;
     bool isOperator = false;
