@@ -72,7 +72,7 @@ void arithStack<T>::makeEmpty() {
     }
 }
 
-bool expInput(){
+bool expInput(){//布尔类型的变量便于菜单栏判断是否继续运算/执行程序。
 
     char* toInput = (char*) malloc(sizeof(char));
     cin>>toInput;
@@ -80,7 +80,7 @@ bool expInput(){
     {
         return false;
     }
-    oriInput = toInput;
+    oriInput = toInput;//将toInput复制给oriInput这个全局变量。
     return true;
 }
 
