@@ -151,10 +151,11 @@ bool expInput(){
     return true;
 }
 
-void preProcess(string& exp, vector<item>& result) {
+void preProcess(string& exp, vector<item>& result) {//省略内容均为退出代码exit(1)
 
+    //排除非法字符
     for (auto it = exp.begin(); it != exp.end(); it++) {
-
+        
         if (!isOperator(*it) && (!isNum(*it)) && (*it != '(') && (*it != ')') && (*it != '=')) {
 
             cout << "Bad Input" << endl;
@@ -173,7 +174,7 @@ void preProcess(string& exp, vector<item>& result) {
         }
 
     }
-
+    //检查括号是否关闭。左括号则isParentOpen++；右括号反之。检查是否为0.
     int isParentOpen = 0;
     for (auto it = exp.begin(); it != exp.end(); it++) {
         if (*it == '(') {
@@ -187,9 +188,16 @@ void preProcess(string& exp, vector<item>& result) {
         cout << "Bad Input" << endl;
         exit(1);
     }
+    //出现连续的三个符号则为非法。为了便于正负号的运算此处判断标准为3个。后续会详细说明
+    for (int i = 0; i < exp.size()-2;i++) {
+        if (isOperator(exp[i]) && isOperator(exp[i+1]) && isOperator(exp[i+2]))
+        {
+            cout << "Bad Input" << endl;
+            exit(1);
+        }
+    }
 
-
-
+    //转换为项目是ITEM的函数
     for (auto it = exp.begin(); it != exp.end(); it++) {
         if (isOperator(*it) || (*it == '(') || (*it == ')')) {
             item tmp;
@@ -208,7 +216,7 @@ void preProcess(string& exp, vector<item>& result) {
             tmp.isDigit = true;
             tmp.digit = (double) stoi(toNum);
             result.push_back(tmp);
-            it = it1 - 1;
+            it = it1 - 1;//大串的iterator转移到跳过数字区的第一个字符。此处-1是因为外围for循环需要+1.
             continue;
         }
     }
@@ -270,6 +278,7 @@ void preProcess(string& exp, vector<item>& result) {
     rightParent.op = ')';
 
     for (int i = 0; i < result.size(); i++) {
+        //如果连续出现同级的运算符，加括号
         if (i + 2 < result.size() && result[i + 2].op != '(' && result[i + 2].op != ')' &&
             isOperator(result[i].op) && isOperator(result[i + 2].op) &&
             equalPrior(result[i].op, result[i + 2].op))
@@ -286,7 +295,7 @@ void preProcess(string& exp, vector<item>& result) {
             result.insert(result.begin() + curFarEqualPriorIndex + 3, rightParent);
 
             int flipFlag = 0;
-
+            //如果为负号和除号，里面的同级运算符加括号时需要变号。
             if (result[i].op == '-' || result[i].op == '/') {
                 flipFlag = 1;
             }
@@ -332,7 +341,7 @@ void preProcess(string& exp, vector<item>& result) {
         }
     }
 
-    //positive sign is before a left parenthesis.
+    //positive sign is before a left parenthesis.此时直接去符号
     for(int i = 0;i<result.size();i++)
     {
         if(i-1>=0 && i+1!= result.size() && result[i+1].isOperator && result[i+1].op =='(' && result[i].isOperator && result[i].op =='+' && result[i-1].isOperator &&isOperator(result[i-1].op)){
@@ -342,7 +351,7 @@ void preProcess(string& exp, vector<item>& result) {
     }
 
 
-    //negative sign is before a left parenthesis.
+    //negative sign is before a left parenthesis.在符号前面加一个0再加外围括号. 变成(0-()).
     for(int i = 0;i<result.size();i++)
     {
         if(i ==1 && result[i].op == '(' && result[i-1].op == '-')
@@ -382,6 +391,21 @@ void preProcess(string& exp, vector<item>& result) {
 
     }
 
+    for (int i = 0; i < result.size()-1; i++)//判断连续的符号。在这一步出现再连续符号是因为源数据有非法的多符号连续输入。
+    {
+        if (result[i].isOperator&&result[i+1].isOperator)
+        {
+            if (result[i].op == '(' || result[i + 1].op == '(' || result[i].op == ')' || result[i + 1].op == ')')
+            {
+                continue;
+            }
+            else {
+                cout << "Bad Input" << endl;
+                exit(1);
+            }
+        }
+    }
+
     item equalSign;
     equalSign.isOperator = true;
     equalSign.op = '=';
@@ -407,18 +431,19 @@ void infix_to_postfix(vector<item>& processedInput, vector<item>& result) {
             result.push_back(processedInput[i]);
         }
 
-        if (processedInput[i].op == '(') {
+        if (processedInput[i].op == '(')//遇到左括号进栈
+        {
             st.Push(processedInput[i]);
         }
 
         if (processedInput[i].op == ')') {
-            while (!st.isEmpty() && curTop.op != '(') {
+            while (!st.isEmpty() && curTop.op != '(') {//一直输出栈内运算符直至遇到左括号
                 st.Pop(_popped);
                 result.push_back(_popped);
-                st.getTop(curTop);
+                st.getTop(curTop);//每出一次栈就更新一下栈顶元素
             }
             //to pop left parenthesis
-            st.Pop(_popped);
+            st.Pop(_popped);//左括号出栈
             st.getTop(curTop);
         }
 
@@ -429,7 +454,7 @@ void infix_to_postfix(vector<item>& processedInput, vector<item>& result) {
                 st.getTop(curTop);
             }
             else{
-                while (!st.isEmpty() && curTop.op != '(' && lessPrior(processedInput[i].op, curTop.op)) {
+                while (!st.isEmpty() && curTop.op != '(' && lessPrior(processedInput[i].op, curTop.op)) {//辅助函数lessPrior判断优先级大小
                     st.Pop(_popped);
                     result.push_back(_popped);
                     st.getTop(curTop);
@@ -461,7 +486,7 @@ double calcRes(vector<item>& postfixExp) {
         if (!postfixExp[i].isOperator && !postfixExp[i].isDigit) {
             continue;
         }
-        if (isOperator(postfixExp[i].op)) {
+        if (isOperator(postfixExp[i].op)) {//运算符取栈顶两位元素进行运算
             st.getTop(right);
             st.Pop(right);
             st.getTop(left);
@@ -470,7 +495,7 @@ double calcRes(vector<item>& postfixExp) {
                 item tmp;
                 tmp.isDigit = true;
                 tmp.digit = left.digit + right.digit;
-                st.Push(tmp);
+                st.Push(tmp);//运算结果进栈
             }
             if (postfixExp[i].op == '-') {
                 item tmp;
@@ -503,7 +528,7 @@ double calcRes(vector<item>& postfixExp) {
                 st.Push(tmp);
             }
 
-        } else {
+        } else {//数字进栈
             st.Push(postfixExp[i]);
         }
     }
